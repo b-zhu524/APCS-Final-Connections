@@ -3,13 +3,11 @@
  */
 public class Word {
     private String text;
-    private Category category;
     boolean found;
 
-    public Word(String txt, Category cat)
+    public Word(String txt)
     {
         text = txt;
-        category = cat;
         found = false;
     }
 
@@ -18,11 +16,6 @@ public class Word {
     public String getText()
     {
         return text;
-    }
-
-    public Category getCategory()
-    {
-        return category;
     }
 
     // setters
