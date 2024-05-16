@@ -1,14 +1,21 @@
 import java.awt.GridLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import java.awt.Insets;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.awt.Insets;
+import java.awt.BorderLayout;
 
 
+/*
+ * GUI for the Connections Game
+ */
 public class ViewConnections extends JFrame
 {
     private JFrame frame;
@@ -33,30 +40,8 @@ public class ViewConnections extends JFrame
     private JButton button14;
     private JButton button15;
 
+    private JButton submit;
 
-    // no args constructor for testing only
-    public ViewConnections()
-    {
-        button0 = new JButton("fruit");
-        button1 = new JButton("fruit");
-        button2 = new JButton("fruit");
-        button3 = new JButton("fruit");
-        button4 = new JButton("fruit");
-        button5 = new JButton("fruit");
-        button6 = new JButton("fruit");
-        button7 = new JButton("fruit");
-        button8 = new JButton("fruit");
-        button9 = new JButton("fruit");
-        button10 = new JButton("fruit");
-        button11 = new JButton("fruit");
-        button12 = new JButton("fruit");
-        button13 = new JButton("fruit");
-        button14 = new JButton("fruit");
-        button15 = new JButton("fruit");
-        
-        frame = new JFrame();
-        clicked = new ArrayList<>();
-    }
 
     public ViewConnections(ArrayList<Word> words)
     {
@@ -78,6 +63,8 @@ public class ViewConnections extends JFrame
         button13 = new JButton(words.get(13).getText());
         button14 = new JButton(words.get(14).getText());
         button15 = new JButton(words.get(15).getText());
+    
+        submit = new JButton("SUBMIT");
 
         frame = new JFrame();
         clicked = new ArrayList<>();
@@ -85,61 +72,85 @@ public class ViewConnections extends JFrame
 
     public void setUpGUI()
     {
-        GridBagConstraints constraints = new GridBagConstraints();
+        GridBagConstraints constraints = new GridBagConstraints(); // none so far
 
         frame.setSize(500, 500);
         frame.setTitle("CONNECTIONS");
         frame.setBackground(Color.LIGHT_GRAY);
-        frame.setLayout(new GridLayout(4, 4));
 
-        frame.add(button0, constraints);
-        frame.add(button1, constraints);
-        frame.add(button2, constraints);
-        frame.add(button3, constraints);
-        frame.add(button4, constraints);
-        frame.add(button5, constraints);
-        frame.add(button6, constraints);
-        frame.add(button7, constraints);
-        frame.add(button8, constraints);
-        frame.add(button9, constraints);
-        frame.add(button10, constraints);
-        frame.add(button11, constraints);
-        frame.add(button12, constraints);
-        frame.add(button13, constraints);
-        frame.add(button14, constraints);
-        frame.add(button15, constraints);
-                
+        JPanel wordGrid = new JPanel();
+        wordGrid.setLayout(new GridLayout(4, 4));
+
+        JPanel bottomGrid = new JPanel();
+        bottomGrid.setLayout(new GridLayout(1, 1));
+        bottomGrid.setPreferredSize(new Dimension(120, 120));
+        
+        bottomGrid.add(submit);
+
+        wordGrid.add(button0, constraints);
+        wordGrid.add(button1, constraints);
+        wordGrid.add(button2, constraints);
+        wordGrid.add(button3, constraints);
+        wordGrid.add(button4, constraints);
+        wordGrid.add(button5, constraints);
+        wordGrid.add(button6, constraints);
+        wordGrid.add(button7, constraints);
+        wordGrid.add(button8, constraints);
+        wordGrid.add(button9, constraints);
+        wordGrid.add(button10, constraints);
+        wordGrid.add(button11, constraints);
+        wordGrid.add(button12, constraints);
+        wordGrid.add(button13, constraints);
+        wordGrid.add(button14, constraints);
+        wordGrid.add(button15, constraints);
+
+        frame.add(bottomGrid, BorderLayout.SOUTH);
+        frame.add(wordGrid);
+
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.setVisible(true);
     }
 
     public void setUpButtonListeners()
     {
-        ActionListener buttonListener = new ActionListener() {
+        ActionListener buttonListener = new ActionListener()
+        {
             @Override
             public void actionPerformed(ActionEvent event)
             {
                 JButton buttonClicked = (JButton) event.getSource();
 
-                // if the button is already clicked, unclick it
-                if (clicked.contains(buttonClicked))
+                if (buttonClicked.equals(submit))
                 {
-                    clicked.remove(buttonClicked);
-                    buttonClicked.setBackground(Color.LIGHT_GRAY);
-                    buttonClicked.setBorderPainted(true);
-                    buttonClicked.setOpaque(false);
+                    // add if condition (if (clicked.size() >= 4))
+                    buttonClicked.setBackground(Color.green);
+                    buttonClicked.setOpaque(true);
+                    buttonClicked.setBorderPainted(false);
+
+                    // timer to change the color back
+
+                    // checkWords
                 }
                 else
                 {
-                    if (clicked.size() < 4)
+                    if (clicked.contains(buttonClicked))
                     {
-                        clicked.add(buttonClicked);
+                        clicked.remove(buttonClicked);
                         buttonClicked.setBackground(Color.LIGHT_GRAY);
-                        buttonClicked.setOpaque(true);
-                        buttonClicked.setBorderPainted(false);
+                        buttonClicked.setBorderPainted(true);
+                        buttonClicked.setOpaque(false);
+                    }
+                    else
+                    {
+                        if (clicked.size() < 4)
+                        {
+                            clicked.add(buttonClicked);
+                            buttonClicked.setBackground(Color.yellow);
+                            buttonClicked.setOpaque(true);
+                            buttonClicked.setBorderPainted(false);
+                        }
                     }
                 }
-
             }
         };
         button0.addActionListener(buttonListener);
@@ -158,5 +169,19 @@ public class ViewConnections extends JFrame
         button13.addActionListener(buttonListener);
         button14.addActionListener(buttonListener);
         button15.addActionListener(buttonListener);
+
+        submit.addActionListener(buttonListener);
+    }
+
+
+    private boolean isCategory()
+    {
+        return true;
+    }
+
+    private void rearrangeCategory()
+    {
+
     }
 }
+
