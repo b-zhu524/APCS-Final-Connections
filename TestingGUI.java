@@ -22,7 +22,7 @@ import java.awt.BorderLayout;
 /*
  * GUI for the Connections Game
  */
-public class ViewConnections extends JFrame
+public class TestingGUI extends JFrame
 {
     private JFrame frame;
 
@@ -53,7 +53,7 @@ public class ViewConnections extends JFrame
     private int numTries;
 
 
-    public ViewConnections(ArrayList<Word> words, ArrayList<Category> cat)
+    public TestingGUI(ArrayList<Word> words, ArrayList<Category> cat)
     {
         Collections.shuffle(words);
         button0 = new JButton(words.get(0).getText());

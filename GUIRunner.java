@@ -11,6 +11,7 @@ public class GUIRunner {
 
         ArrayList<Category> categories = new ArrayList<>();
 
+        // ViewConnections vc = new ViewConnections(words, categories);
         ViewConnections vc = new ViewConnections(words, categories);
         vc.setUpGUI();
         vc.setUpButtonListeners();

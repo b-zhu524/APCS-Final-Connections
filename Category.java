@@ -38,6 +38,6 @@ public class Category
 
     public ArrayList<Word> getWords()
     {
-        return words;
+        return words.sort(); // return sorted
     }
 }
