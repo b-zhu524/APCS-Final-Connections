@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import java.awt.event.*;
@@ -19,9 +20,6 @@ import java.awt.BorderLayout;
 public class ViewConnections extends JFrame
 {
     private JFrame frame;
-    private ArrayList<JButton> clicked;
-
-    private ArrayList<Word> words;
 
     private JButton button0;
     private JButton button1;
@@ -41,11 +39,17 @@ public class ViewConnections extends JFrame
     private JButton button15;
 
     private JButton submit;
+    private JLabel triesLabel;
+
+    private ArrayList<JButton> clicked;
+    private ArrayList<Word> wordsClicked;
+    private int numRowsGuessed;
+    private ArrayList<Category> categories;
+    private int numTries;
 
 
-    public ViewConnections(ArrayList<Word> words)
+    public ViewConnections(ArrayList<Word> words, ArrayList<Category> cat)
     {
-        this.words = words;
         Collections.shuffle(words);
         button0 = new JButton(words.get(0).getText());
         button1 = new JButton(words.get(1).getText());
@@ -68,7 +72,15 @@ public class ViewConnections extends JFrame
 
         frame = new JFrame();
         clicked = new ArrayList<>();
+        wordsClicked = new ArrayList<>();
+        categories = cat;
+        
+        numTries = 4;
+        numRowsGuessed = 0;
+
+        triesLabel = new JLabel("Tries Left: " + numTries, JLabel.CENTER);
     }
+
 
     public void setUpGUI()
     {
@@ -78,14 +90,50 @@ public class ViewConnections extends JFrame
         frame.setTitle("CONNECTIONS");
         frame.setBackground(Color.LIGHT_GRAY);
 
-        JPanel wordGrid = new JPanel();
-        wordGrid.setLayout(new GridLayout(4, 4));
-
         JPanel bottomGrid = new JPanel();
         bottomGrid.setLayout(new GridLayout(1, 1));
         bottomGrid.setPreferredSize(new Dimension(120, 120));
         
         bottomGrid.add(submit);
+        bottomGrid.add(triesLabel);
+
+        JPanel wordGrid = new JPanel();
+        wordGrid.setLayout(new GridLayout(4, 4));
+
+        // JPanel row1 = new JPanel();
+        // row1.setLayout(new GridLayout(1, 4));
+
+        // JPanel row2 = new JPanel();
+        // row1.setLayout(new GridLayout(1, 4));
+
+        // JPanel row3 = new JPanel();
+        // row1.setLayout(new GridLayout(1, 4));
+
+        // JPanel row4 = new JPanel();
+        // row1.setLayout(new GridLayout(1, 4));
+
+        // row1.add(button0, constraints);
+        // row1.add(button1, constraints);
+        // row1.add(button2, constraints);
+        // row1.add(button3, constraints);
+        // row2.add(button4, constraints);
+        // row2.add(button5, constraints);
+        // row2.add(button6, constraints);
+        // row2.add(button7, constraints);
+        // row3.add(button8, constraints);
+        // row3.add(button9, constraints);
+        // row3.add(button10, constraints);
+        // row3.add(button11, constraints);
+        // row4.add(button12, constraints);
+        // row4.add(button13, constraints);
+        // row4.add(button14, constraints);
+        // row4.add(button15, constraints);
+
+        // frame.add(bottomGrid, BorderLayout.SOUTH);
+        // frame.add(row1);
+        // frame.add(row2);
+        // frame.add(row3);
+        // frame.add(row4);
 
         wordGrid.add(button0, constraints);
         wordGrid.add(button1, constraints);
@@ -119,17 +167,45 @@ public class ViewConnections extends JFrame
             public void actionPerformed(ActionEvent event)
             {
                 JButton buttonClicked = (JButton) event.getSource();
+                String wordText = buttonClicked.getText();
+                Word clickedWord = new Word(wordText);
+
+                // can't click flipped words
+                if (!clickedWord.isValid())
+                {
+                    return;
+                }
 
                 if (buttonClicked.equals(submit))
                 {
-                    // add if condition (if (clicked.size() >= 4))
-                    buttonClicked.setBackground(Color.green);
-                    buttonClicked.setOpaque(true);
-                    buttonClicked.setBorderPainted(false);
+                    if (clicked.size() == 4)
+                    {
+                        buttonClicked.setBackground(Color.green);
+                        buttonClicked.setOpaque(true);
+                        buttonClicked.setBorderPainted(false);
+                        // checkWords
+                        int result = checkWords();
+                        if (result == 1)
+                        {
+                            reshuffle();
+                            numRowsGuessed++;
+                        }
+                        else if (result == 0)
+                        {
+                            // print one word wrong, so close
 
-                    // timer to change the color back
+                            numTries--;
+                            triesLabel.setText("Tries Left: " + numTries);
+                        }
+                        else
+                        {
+                            //print wrong
 
-                    // checkWords
+                            numTries--;
+                            triesLabel.setText("Tries Left: " + numTries);
+                        }
+                        // timer to change the color back
+                    }
                 }
                 else
                 {
@@ -145,14 +221,23 @@ public class ViewConnections extends JFrame
                         if (clicked.size() < 4)
                         {
                             clicked.add(buttonClicked);
-                            buttonClicked.setBackground(Color.yellow);
+                            wordsClicked.add(clickedWord);
+
+                            buttonClicked.setBackground(Color.gray);
                             buttonClicked.setOpaque(true);
                             buttonClicked.setBorderPainted(false);
                         }
                     }
                 }
+
+                if (numTries == 0)
+                {
+                    // GAME OVER
+                }
             }
         };
+
+
         button0.addActionListener(buttonListener);
         button1.addActionListener(buttonListener);
         button2.addActionListener(buttonListener);
@@ -174,14 +259,48 @@ public class ViewConnections extends JFrame
     }
 
 
-    private boolean isCategory()
+    /**
+     * 
+     * @return 1 if exact, 0 if off by one, -1 if off by more than one
+     */
+    private int checkWords()
     {
-        return true;
+        ArrayList<Word> compareList = new ArrayList<>();
+        for (JButton w : clicked)
+        {
+            compareList.add(new Word(w.getText()));
+        }
+
+        Category checkCat = new Category(compareList);
+
+        for ( Category c : categories )
+        {
+            if (c.compareCategory(checkCat) == 1)
+            {
+                return 1;
+            }
+            else if (c.compareCategory(checkCat) == 0)
+            {
+                return 0;
+            }
+        }
+        return -1;
     }
 
-    private void rearrangeCategory()
+    private void reshuffle()
     {
+        int r = numRowsGuessed - 1;
 
+        Category guessedClass = new Category(wordsClicked);
+        String catName = guessedClass.getName();
+        
+    }
+
+    private void swapWords(JButton b1, JButton b2)
+    {
+        String temp = b1.getText();
+        b1.setText(b2.getText());
+        b2.setText(temp);
     }
 }
 

@@ -9,7 +9,9 @@ public class GUIRunner {
             words.add(new Word(w));
         }
 
-        ViewConnections vc = new ViewConnections(words);
+        ArrayList<Category> categories = new ArrayList<>();
+
+        ViewConnections vc = new ViewConnections(words, categories);
         vc.setUpGUI();
         vc.setUpButtonListeners();
     }

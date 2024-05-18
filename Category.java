@@ -6,43 +6,38 @@ import java.util.*;
 
 public class Category
 {
-    private String categoryName;
     private ArrayList<Word> words;
-    boolean found;
+    private boolean grouped;
+    private String categoyName;
 
-    public Category(String name, ArrayList<Word> words)
+    public Category(ArrayList<Word> words)
     {
-        categoryName = name;
         this.words = words;
-        found = false;
+        grouped = false;
+    }
+    
+    /**
+     * 
+     * @return returns 1 if they're exactly equal
+     * returns 0 if it's off by 1
+     * returns -1 if it's off by more than 1
+     */
+    public int compareCategory(Category other)
+    {
     }
 
-    // todo
-    public boolean allFound(String word1, String word2, String w3, String w4)
+    private void sortWords()
     {
-        return true;
+        words.sort()
     }
 
-    // getters
-    public String getCategory()
+    public String getName()
     {
-        return categoryName;
+        return categoyName;
     }
 
     public ArrayList<Word> getWords()
     {
         return words;
-    }
-
-    public boolean categoryIsFound()
-    {
-        return found;
-    }
-
-    // setters
-
-    public void setFound(boolean status)
-    {
-        found = status;
     }
 }

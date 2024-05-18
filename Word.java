@@ -1,27 +1,44 @@
 /*
  * represents individual words. the game has 16 of them
  */
-public class Word {
-    private String text;
-    boolean found;
 
-    public Word(String txt)
+import java.util.*;
+
+public class Word implements Comparable<Word>
+{
+    private String text;
+    private boolean isFlipped;
+    private static HashSet<Word> flippedWords;
+
+    public Word(String text)
     {
-        text = txt;
-        found = false;
+        this.text = text;
+        isFlipped = false;
     }
 
-    // getters
+    public int compareTo(Word other)
+    {
+        return text.compareTo(other.getText());
+    }
 
+    public boolean equals(Word other)
+    {
+        return text.equals(other.getText());
+    }
+
+    // Getters
     public String getText()
     {
         return text;
     }
 
-    // setters
-
-    public void findWord()
+    // todo
+    public boolean isCategory(Catetgory cat)
     {
-        found = true;
+    }
+
+    public boolean isValid()
+    {
+        return !isFlipped;
     }
 }
