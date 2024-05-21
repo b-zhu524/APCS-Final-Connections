@@ -2,7 +2,6 @@ import java.awt.GridLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -18,26 +17,26 @@ public class ViewConnections extends JFrame
 {
     private JFrame frame;
 
-    private JButton button0;
-    private JButton button1;
-    private JButton button2;
-    private JButton button3;
-    private JButton button4;
-    private JButton button5;
-    private JButton button6;
-    private JButton button7;
-    private JButton button8;
-    private JButton button9;
-    private JButton button10;
-    private JButton button11;
-    private JButton button12;
-    private JButton button13;
-    private JButton button14;
-    private JButton button15;
-    JButton[] buttonList = {button0, button1, button2, button3, button4, button5, button6, button7,
+    private GameButton button0;
+    private GameButton button1;
+    private GameButton button2;
+    private GameButton button3;
+    private GameButton button4;
+    private GameButton button5;
+    private GameButton button6;
+    private GameButton button7;
+    private GameButton button8;
+    private GameButton button9;
+    private GameButton button10;
+    private GameButton button11;
+    private GameButton button12;
+    private GameButton button13;
+    private GameButton button14;
+    private GameButton button15;
+    GameButton[] buttonList = {button0, button1, button2, button3, button4, button5, button6, button7,
                             button8, button9, button10, button11, button12, button13, button14, button15};
 
-    private JButton submit;
+    private GameButton submit;
     private JLabel triesLabel;
 
     private JPanel row1;
@@ -45,8 +44,7 @@ public class ViewConnections extends JFrame
     private JPanel row3;
     private JPanel row4;
 
-    private ArrayList<JButton> clicked;
-    private ArrayList<Word> wordsClicked;
+    private ArrayList<GameButton> clicked;
     private Category[] categories;
 
     private int numRowsGuessed;
@@ -56,28 +54,27 @@ public class ViewConnections extends JFrame
     public ViewConnections(ArrayList<Word> words, Category[] cats)
     {
         Collections.shuffle(words);
-        button0 = new JButton(words.get(0).getText());
-        button1 = new JButton(words.get(1).getText());
-        button2 = new JButton(words.get(2).getText());
-        button3 = new JButton(words.get(3).getText());
-        button4 = new JButton(words.get(4).getText());
-        button5 = new JButton(words.get(5).getText());
-        button6 = new JButton(words.get(6).getText());
-        button7 = new JButton(words.get(7).getText());
-        button8 = new JButton(words.get(8).getText());
-        button9 = new JButton(words.get(9).getText());
-        button10 = new JButton(words.get(10).getText());
-        button11 = new JButton(words.get(11).getText());
-        button12 = new JButton(words.get(12).getText());
-        button13 = new JButton(words.get(13).getText());
-        button14 = new JButton(words.get(14).getText());
-        button15 = new JButton(words.get(15).getText());
+        button0 = new GameButton(words.get(0).getText());
+        button1 = new GameButton(words.get(1).getText());
+        button2 = new GameButton(words.get(2).getText());
+        button3 = new GameButton(words.get(3).getText());
+        button4 = new GameButton(words.get(4).getText());
+        button5 = new GameButton(words.get(5).getText());
+        button6 = new GameButton(words.get(6).getText());
+        button7 = new GameButton(words.get(7).getText());
+        button8 = new GameButton(words.get(8).getText());
+        button9 = new GameButton(words.get(9).getText());
+        button10 = new GameButton(words.get(10).getText());
+        button11 = new GameButton(words.get(11).getText());
+        button12 = new GameButton(words.get(12).getText());
+        button13 = new GameButton(words.get(13).getText());
+        button14 = new GameButton(words.get(14).getText());
+        button15 = new GameButton(words.get(15).getText());
     
-        submit = new JButton("SUBMIT");
+        submit = new GameButton("SUBMIT");
 
         frame = new JFrame();
         clicked = new ArrayList<>();
-        wordsClicked = new ArrayList<>();
         categories = cats;
         
         numTries = 4;
@@ -92,7 +89,7 @@ public class ViewConnections extends JFrame
         // set up the frame
         frame.setSize(500, 500);
         frame.setTitle("Create Groups of Four!");
-        frame.setBackground(Color.LIGHT_GRAY);
+        frame.setBackground(Color.WHITE);
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         
         // set up the words grid
@@ -133,6 +130,7 @@ public class ViewConnections extends JFrame
         container.add(row4);
 	
 
+
         // add to bottomgrid
         JPanel bottomGrid = new JPanel();
         bottomGrid.setLayout(new GridLayout(1, 1));
@@ -156,17 +154,13 @@ public class ViewConnections extends JFrame
             @Override
             public void actionPerformed(ActionEvent event)
             {
-                JButton buttonClicked = (JButton) event.getSource();
+                GameButton buttonClicked = (GameButton) event.getSource();
                 String wordText = buttonClicked.getText();
-                Word clickedWord = new Word(wordText);
 
                 if (buttonClicked.equals(submit))
                 {
                     if (clicked.size() == 4)
                     {
-                        buttonClicked.setBackground(Color.green);
-                        buttonClicked.setOpaque(true);
-                        buttonClicked.setBorderPainted(false);
                         
                         // checkWords
                         int result = getResult();
@@ -182,43 +176,52 @@ public class ViewConnections extends JFrame
                         else if (result == 0) // ONE AWAY!
                         {
                             System.out.println("ONE OFF");
-
                             numTries--;
                             triesLabel.setText("Tries Left: " + numTries);
                         }
                         else // WRONG
                         {
-                            System.out.println("SOMETHING WRONG");
-
                             // completely wrong
                             numTries--;
                             triesLabel.setText("Tries Left: " + numTries);
                         }
+
+
+                        if (numTries == 0 || numRowsGuessed == 4)
+                        {
+                            if (numRowsGuessed == 4)
+                            {
+                                gameOver(true);
+                            }
+                            else 
+                            {
+                                gameOver(false);
+                            }
+                        }
+
+
                         // timer to wait
                         // change color back
 
-                        unclickAllButtons(); // weird bug. without unclicking submit, pressing 4 buttons in the same row in a row would freeze the program
-                        
-                        // pause so that submit lights up green for a second
-                        unclickButton(submit);
+                        unclickAllButtons();                        
+                        // pause so that submit lights up green/red for a second
+                        submit.unclickButton();
                     }
                 }
                 else
                 {
                     if (clicked.contains(buttonClicked))
                     {
-                        unclickButton(buttonClicked);
+                        buttonClicked.unclickButton();
+                        clicked.remove(buttonClicked);
                     }
                     else
                     {
                         if (clicked.size() < 4)
                         {
                             clicked.add(buttonClicked);
-                            wordsClicked.add(clickedWord);
 
-                            buttonClicked.setBackground(Color.gray);
-                            buttonClicked.setOpaque(true);
-                            buttonClicked.setBorderPainted(false);
+                            buttonClicked.clickButton();
                         }
                     }
                 }
@@ -251,6 +254,12 @@ public class ViewConnections extends JFrame
     }
 
 
+    // NEED TO IMPLEMENT
+    private void gameOver(boolean won)
+    {
+
+    }
+
     private int getResult()
     {
         Category cat = makeCategory(clicked);
@@ -269,7 +278,7 @@ public class ViewConnections extends JFrame
         return -1;
     }
 
-    private int getCategoryIndex(ArrayList<JButton> buttonList)
+    private int getCategoryIndex(ArrayList<GameButton> buttonList)
     {
         Category checkedCat = makeCategory(buttonList);
         
@@ -284,7 +293,7 @@ public class ViewConnections extends JFrame
         return -1;
     }
 
-    private Category getCategory( JButton button )
+    private Category getCategory( GameButton button )
     {
         for ( Category c : categories )
         {
@@ -297,7 +306,7 @@ public class ViewConnections extends JFrame
         return null;
     }
 
-    private Category makeCategory(ArrayList<JButton> buttonList)
+    private Category makeCategory(ArrayList<GameButton> buttonList)
     {
         Word[] wordList = new Word[4];
         wordList[0] = new Word(buttonList.get(0).getText());
@@ -310,19 +319,18 @@ public class ViewConnections extends JFrame
     }
 
 
-    // BUG---does not move words around 
     private void reshuffle()
     {
         int row = numRowsGuessed;
-        ArrayList<JButton> rowWords = getWords(row);
+        ArrayList<GameButton> rowWords = getWords(row);
         Category clickedCat = getCategory(clicked.get(0));
 
         for ( int i=0; i<4; i++ )
         {
             for ( int j=0; j<4; j++ )
             {
-                JButton rw = rowWords.get(i);
-                JButton cw = clicked.get(j);
+                GameButton rw = rowWords.get(i);
+                GameButton cw = clicked.get(j);
 
                 if (!getCategory(rw).equals(clickedCat))
                 {
@@ -424,11 +432,11 @@ public class ViewConnections extends JFrame
                 }
                 else if ( i == 2 )
                 {
-                    return new Color(180, 195, 235);
+                    return new Color(180, 195, 235); // LIGHT BLUE from NYTIMES
                 }
                 else
                 {
-                    return new Color(170, 130, 190);
+                    return new Color(170, 130, 190); // PURPLE from NYTIMES
                 }
             }
         }
@@ -436,16 +444,16 @@ public class ViewConnections extends JFrame
         return null;
     }
 
-    private void swapWords(JButton b1, JButton b2)
+    private void swapWords(GameButton b1, GameButton b2)
     {
         String temp = b1.getText();
         b1.setText(b2.getText());
         b2.setText(temp);
     }
     
-    private ArrayList<JButton> getWords(int row)
+    private ArrayList<GameButton> getWords(int row)
     {
-        ArrayList<JButton> ret = new ArrayList<>();
+        ArrayList<GameButton> ret = new ArrayList<>();
 
         if (row == 0)
         {
@@ -478,40 +486,14 @@ public class ViewConnections extends JFrame
 
         return ret;
     }
-
-    private void unclickButton(JButton b)
-    {
-        b.setBackground(Color.LIGHT_GRAY);
-        b.setBorderPainted(true);
-        b.setOpaque(false);
-        clicked.remove(b);
-    }
-    
+   
     private void unclickAllButtons()
     {
         int n = clicked.size();
         for ( int i=0; i<n; i++)
         {
-            unclickButton(clicked.get(0));
+            clicked.get(0).unclickButton();
+            clicked.remove(0);
         }
     }
-    
-
-    // only for testing
-    private void printJButton(ArrayList<JButton> printList)
-    {
-        for ( JButton jb : printList )
-        {
-            System.out.print(jb.getText());
-        }
-        System.out.println();
-    }
-
-    private void testSwap()
-    {
-        System.out.println(button0.getText() + " " + button1.getText());
-        swapWords(button1, button0);
-        System.out.println(button0.getText() + " " + button1.getText());
-    }
- 
 }

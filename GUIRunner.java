@@ -43,6 +43,6 @@ public class GUIRunner {
         ViewConnections vc = new ViewConnections(words, categories);
         vc.setUpGUI();
         vc.setUpButtonListeners();
-
+        
     }
 }

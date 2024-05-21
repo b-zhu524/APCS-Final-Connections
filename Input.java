@@ -12,5 +12,6 @@ public class Input
     }
 	public Category[] getCats()
 	{
+		return null;
 	}
 }

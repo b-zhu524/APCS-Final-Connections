@@ -5,6 +5,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -133,6 +134,7 @@ public class TestingGUI extends JFrame
         container.add(row4);
 	
 
+
         // add to bottomgrid
         JPanel bottomGrid = new JPanel();
         bottomGrid.setLayout(new GridLayout(1, 1));
@@ -164,9 +166,6 @@ public class TestingGUI extends JFrame
                 {
                     if (clicked.size() == 4)
                     {
-                        buttonClicked.setBackground(Color.green);
-                        buttonClicked.setOpaque(true);
-                        buttonClicked.setBorderPainted(false);
                         
                         // checkWords
                         int result = getResult();
@@ -182,24 +181,35 @@ public class TestingGUI extends JFrame
                         else if (result == 0) // ONE AWAY!
                         {
                             System.out.println("ONE OFF");
-
                             numTries--;
                             triesLabel.setText("Tries Left: " + numTries);
                         }
                         else // WRONG
                         {
-                            System.out.println("SOMETHING WRONG");
-
                             // completely wrong
                             numTries--;
                             triesLabel.setText("Tries Left: " + numTries);
                         }
+
+
+                        if (numTries == 0 || numRowsGuessed == 4)
+                        {
+                            if (numRowsGuessed == 4)
+                            {
+                                gameOver(true);
+                            }
+                            else 
+                            {
+                                gameOver(false);
+                            }
+                        }
+
+
                         // timer to wait
                         // change color back
 
-                        unclickAllButtons(); // weird bug. without unclicking submit, pressing 4 buttons in the same row in a row would freeze the program
-                        
-                        // pause so that submit lights up green for a second
+                        unclickAllButtons();                        
+                        // pause so that submit lights up green/red for a second
                         unclickButton(submit);
                     }
                 }
@@ -250,6 +260,12 @@ public class TestingGUI extends JFrame
         submit.addActionListener(buttonListener);
     }
 
+
+    // NEED TO IMPLEMENT
+    private void gameOver(boolean won)
+    {
+
+    }
 
     private int getResult()
     {
@@ -310,7 +326,6 @@ public class TestingGUI extends JFrame
     }
 
 
-    // BUG---does not move words around 
     private void reshuffle()
     {
         int row = numRowsGuessed;
@@ -341,24 +356,7 @@ public class TestingGUI extends JFrame
 
 
     // HELPER METHODS
-
-    // only for testing
-    private void printJButton(ArrayList<JButton> printList)
-    {
-        for ( JButton jb : printList )
-        {
-            System.out.print(jb.getText());
-        }
-        System.out.println();
-    }
-
-    private void testSwap()
-    {
-        System.out.println(button0.getText() + " " + button1.getText());
-        swapWords(button1, button0);
-        System.out.println(button0.getText() + " " + button1.getText());
-    }
-    
+   
     private void turnIntoLabel(int r, String categoryInfo)
     {
         JLabel toAdd = new JLabel(categoryInfo, JLabel.CENTER);
@@ -441,11 +439,11 @@ public class TestingGUI extends JFrame
                 }
                 else if ( i == 2 )
                 {
-                    return new Color(180, 195, 235);
+                    return new Color(180, 195, 235); // LIGHT BLUE from NYTIMES
                 }
                 else
                 {
-                    return new Color(170, 130, 190);
+                    return new Color(170, 130, 190); // PURPLE from NYTIMES
                 }
             }
         }

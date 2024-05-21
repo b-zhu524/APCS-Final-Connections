@@ -11,7 +11,7 @@ public class Word
 
     public Word(String text)
     {
-        this.text = text;
+        this.text = text.toUpperCase();
         isFlipped = false;
     }
 
