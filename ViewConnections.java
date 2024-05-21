@@ -1,23 +1,15 @@
 import java.awt.GridLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
-
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.awt.Insets;
 import java.awt.BorderLayout;
-
 
 /*
  * GUI for the Connections Game
@@ -42,18 +34,26 @@ public class ViewConnections extends JFrame
     private JButton button13;
     private JButton button14;
     private JButton button15;
+    JButton[] buttonList = {button0, button1, button2, button3, button4, button5, button6, button7,
+                            button8, button9, button10, button11, button12, button13, button14, button15};
 
     private JButton submit;
     private JLabel triesLabel;
 
+    private JPanel row1;
+    private JPanel row2;
+    private JPanel row3;
+    private JPanel row4;
+
     private ArrayList<JButton> clicked;
     private ArrayList<Word> wordsClicked;
+    private Category[] categories;
+
     private int numRowsGuessed;
-    private ArrayList<Category> categories;
     private int numTries;
 
 
-    public ViewConnections(ArrayList<Word> words, ArrayList<Category> cat)
+    public ViewConnections(ArrayList<Word> words, Category[] cats)
     {
         Collections.shuffle(words);
         button0 = new JButton(words.get(0).getText());
@@ -78,7 +78,7 @@ public class ViewConnections extends JFrame
         frame = new JFrame();
         clicked = new ArrayList<>();
         wordsClicked = new ArrayList<>();
-        categories = cat;
+        categories = cats;
         
         numTries = 4;
         numRowsGuessed = 0;
@@ -91,7 +91,7 @@ public class ViewConnections extends JFrame
     {
         // set up the frame
         frame.setSize(500, 500);
-        frame.setTitle("CONNECTIONS");
+        frame.setTitle("Create Groups of Four!");
         frame.setBackground(Color.LIGHT_GRAY);
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         
@@ -99,7 +99,7 @@ public class ViewConnections extends JFrame
         JPanel container = new JPanel();
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
 
-        JPanel row1 = new JPanel();
+        row1 = new JPanel();
         row1.setLayout(new GridLayout(1, 4));
         row1.add(button0);
         row1.add(button1);
@@ -107,7 +107,7 @@ public class ViewConnections extends JFrame
         row1.add(button3);
         container.add(row1);
 
-        JPanel row2 = new JPanel();
+        row2 = new JPanel();
         row2.setLayout(new GridLayout(1, 4));
         row2.add(button4);
         row2.add(button5);
@@ -115,7 +115,7 @@ public class ViewConnections extends JFrame
         row2.add(button7);
         container.add(row2);
 
-        JPanel row3 = new JPanel();
+        row3 = new JPanel();
         row3.setLayout(new GridLayout(1, 4));
         row3.add(button8);
         row3.add(button9);
@@ -124,7 +124,7 @@ public class ViewConnections extends JFrame
         container.add(row3);
 	
 
-        JPanel row4 = new JPanel();
+        row4 = new JPanel();
         row4.setLayout(new GridLayout(1, 4));
         row4.add(button12);
         row4.add(button13);
@@ -160,12 +160,6 @@ public class ViewConnections extends JFrame
                 String wordText = buttonClicked.getText();
                 Word clickedWord = new Word(wordText);
 
-                // can't click flipped words
-                if (!clickedWord.isValid())
-                {
-                    return;
-                }
-
                 if (buttonClicked.equals(submit))
                 {
                     if (clicked.size() == 4)
@@ -173,38 +167,47 @@ public class ViewConnections extends JFrame
                         buttonClicked.setBackground(Color.green);
                         buttonClicked.setOpaque(true);
                         buttonClicked.setBorderPainted(false);
+                        
                         // checkWords
-                        int result = checkWords();
-                        if (result == 1)
+                        int result = getResult();
+
+                        if (result == 1) // CORRECT
                         {
+                            int cIndex = getCategoryIndex(clicked);
+                            // add pause
                             reshuffle();
+                            turnIntoLabel(numRowsGuessed, categories[cIndex].printCategory()); // need to print every word in the category. "FRUITS". is a placeholder
                             numRowsGuessed++;
                         }
-                        else if (result == 0)
+                        else if (result == 0) // ONE AWAY!
                         {
-                            // print one word wrong, so close
+                            System.out.println("ONE OFF");
 
                             numTries--;
                             triesLabel.setText("Tries Left: " + numTries);
                         }
-                        else
+                        else // WRONG
                         {
-                            //print wrong
+                            System.out.println("SOMETHING WRONG");
 
+                            // completely wrong
                             numTries--;
                             triesLabel.setText("Tries Left: " + numTries);
                         }
-                        // timer to change the color back
+                        // timer to wait
+                        // change color back
+
+                        unclickAllButtons(); // weird bug. without unclicking submit, pressing 4 buttons in the same row in a row would freeze the program
+                        
+                        // pause so that submit lights up green for a second
+                        unclickButton(submit);
                     }
                 }
                 else
                 {
                     if (clicked.contains(buttonClicked))
                     {
-                        clicked.remove(buttonClicked);
-                        buttonClicked.setBackground(Color.LIGHT_GRAY);
-                        buttonClicked.setBorderPainted(true);
-                        buttonClicked.setOpaque(false);
+                        unclickButton(buttonClicked);
                     }
                     else
                     {
@@ -244,32 +247,21 @@ public class ViewConnections extends JFrame
         button13.addActionListener(buttonListener);
         button14.addActionListener(buttonListener);
         button15.addActionListener(buttonListener);
-
         submit.addActionListener(buttonListener);
     }
 
 
-    /**
-     * 
-     * @return 1 if exact, 0 if off by one, -1 if off by more than one
-     */
-    private int checkWords()
+    private int getResult()
     {
-        ArrayList<Word> compareList = new ArrayList<>();
-        for (JButton w : clicked)
+        Category cat = makeCategory(clicked);
+        for (Category c : categories)
         {
-            compareList.add(new Word(w.getText()));
-        }
-
-        Category checkCat = new Category(compareList);
-
-        for ( Category c : categories )
-        {
-            if (c.compareCategory(checkCat) == 1)
+            int res = c.compareCategory(cat);
+            if (res == 1)
             {
                 return 1;
             }
-            else if (c.compareCategory(checkCat) == 0)
+            if (res == 0)
             {
                 return 0;
             }
@@ -277,16 +269,171 @@ public class ViewConnections extends JFrame
         return -1;
     }
 
+    private int getCategoryIndex(ArrayList<JButton> buttonList)
+    {
+        Category checkedCat = makeCategory(buttonList);
+        
+        for ( int i=0; i<4; i++ )
+        {
+            if (categories[i].equals(checkedCat))
+            {
+                return i;
+            }
+        }
+        
+        return -1;
+    }
+
+    private Category getCategory( JButton button )
+    {
+        for ( Category c : categories )
+        {
+            Word w = new Word(button.getText());
+            if (w.inCategory(c))
+            {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    private Category makeCategory(ArrayList<JButton> buttonList)
+    {
+        Word[] wordList = new Word[4];
+        wordList[0] = new Word(buttonList.get(0).getText());
+        wordList[1] = new Word(buttonList.get(1).getText());
+        wordList[2] = new Word(buttonList.get(2).getText());
+        wordList[3] = new Word(buttonList.get(3).getText());
+
+        Category ret = new Category(wordList, ""); // name irrelevant
+        return ret;
+    }
+
+
+    // BUG---does not move words around 
     private void reshuffle()
     {
-        int r = numRowsGuessed - 1;
+        int row = numRowsGuessed;
+        ArrayList<JButton> rowWords = getWords(row);
+        Category clickedCat = getCategory(clicked.get(0));
 
-        JButton[] buttons = {button0, button1, button2, button3, button4, button5, button6, button7, button8, button9, button10, button11, button12, button13,
-                            button14, button15};
-        Category guessedClass = new Category(wordsClicked);
-        String catName = guessedClass.getName();
-        ArrayList<Word> wordList = guessedClass.getWords();
+        for ( int i=0; i<4; i++ )
+        {
+            for ( int j=0; j<4; j++ )
+            {
+                JButton rw = rowWords.get(i);
+                JButton cw = clicked.get(j);
+
+                if (!getCategory(rw).equals(clickedCat))
+                {
+                    if (!rowWords.contains(cw))
+                    {
+                        if (getCategory(cw).equals(clickedCat))
+                        {
+                            swapWords(rw, cw);
+                            break;
+                        }
+                    }
+                }
+           }
+        }
+    }
+
+
+    // HELPER METHODS
+   
+    private void turnIntoLabel(int r, String categoryInfo)
+    {
+        JLabel toAdd = new JLabel(categoryInfo, JLabel.CENTER);
+        toAdd.setBackground(getColor(categoryInfo));
+
+        toAdd.setOpaque(true);                        
+
+        if (r == 0)
+        {
+            row1.remove(button0);
+            row1.remove(button1);
+            row1.remove(button2);
+            row1.remove(button3);
+
+            button0 = null;
+            button1 = null;
+            button2 = null;
+            button3 = null;
+            row1.add(toAdd);
+        }
+        else if (r == 1)
+        {
+            row2.remove(button4);
+            row2.remove(button5);
+            row2.remove(button6);
+            row2.remove(button7);
+
+            button4 = null;
+            button5 = null;
+            button6 = null;
+            button7 = null;
+
+            row2.add(toAdd);
+        }
+        else if (r == 2)
+        {
+            row3.remove(button8);
+            row3.remove(button9);
+            row3.remove(button10);
+            row3.remove(button11);
+
+            button8 = null;
+            button9 = null;
+            button10 = null;
+            button11 = null;
+            
+            row3.add(toAdd);
+       }
+        else if (r == 3)
+        {
+            row4.remove(button12);
+            row4.remove(button13);
+            row4.remove(button14);
+            row4.remove(button15);
+
+            button12 = null;
+            button13 = null;
+            button14 = null;
+            button15 = null;
+
+            row4.add(toAdd);
+        }
+
+    }
+
+    private Color getColor(String categoryInfo)
+    {
+        for ( int i=0; i<4; i++ )
+        {
+            if ( categoryInfo.equals(categories[i].printCategory()) )
+            {
+                if ( i == 0 )
+                {
+                    return new Color(240, 225, 140); // YELLOW from NYTIMES
+                }
+
+                else if ( i == 1 )
+                {
+                    return new Color(175, 195, 115); // GREEN from NYTIMES
+                }
+                else if ( i == 2 )
+                {
+                    return new Color(180, 195, 235);
+                }
+                else
+                {
+                    return new Color(170, 130, 190);
+                }
+            }
+        }
         
+        return null;
     }
 
     private void swapWords(JButton b1, JButton b2)
@@ -295,5 +442,76 @@ public class ViewConnections extends JFrame
         b1.setText(b2.getText());
         b2.setText(temp);
     }
-}
+    
+    private ArrayList<JButton> getWords(int row)
+    {
+        ArrayList<JButton> ret = new ArrayList<>();
 
+        if (row == 0)
+        {
+            ret.add(button0);
+            ret.add(button1);
+            ret.add(button2);
+            ret.add(button3);
+        }
+        else if (row == 1)
+        {
+            ret.add(button4);
+            ret.add(button5);
+            ret.add(button6);
+            ret.add(button7);
+        }
+        else if (row == 2)
+        {
+            ret.add(button8);
+            ret.add(button9);
+            ret.add(button10);
+            ret.add(button11);
+        }
+        else if (row == 3)
+        {
+            ret.add(button12);
+            ret.add(button13);
+            ret.add(button14);
+            ret.add(button15);
+        }
+
+        return ret;
+    }
+
+    private void unclickButton(JButton b)
+    {
+        b.setBackground(Color.LIGHT_GRAY);
+        b.setBorderPainted(true);
+        b.setOpaque(false);
+        clicked.remove(b);
+    }
+    
+    private void unclickAllButtons()
+    {
+        int n = clicked.size();
+        for ( int i=0; i<n; i++)
+        {
+            unclickButton(clicked.get(0));
+        }
+    }
+    
+
+    // only for testing
+    private void printJButton(ArrayList<JButton> printList)
+    {
+        for ( JButton jb : printList )
+        {
+            System.out.print(jb.getText());
+        }
+        System.out.println();
+    }
+
+    private void testSwap()
+    {
+        System.out.println(button0.getText() + " " + button1.getText());
+        swapWords(button1, button0);
+        System.out.println(button0.getText() + " " + button1.getText());
+    }
+ 
+}

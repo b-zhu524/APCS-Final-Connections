@@ -4,11 +4,10 @@
 
 import java.util.*;
 
-public class Word implements Comparable<Word>
+public class Word
 {
     private String text;
     private boolean isFlipped;
-    private static HashSet<Word> flippedWords;
 
     public Word(String text)
     {
@@ -16,25 +15,27 @@ public class Word implements Comparable<Word>
         isFlipped = false;
     }
 
-    public int compareTo(Word other)
-    {
-        return text.compareTo(other.getText());
-    }
-
     public boolean equals(Word other)
     {
         return text.equals(other.getText());
+    }
+
+    public boolean inCategory(Category parent)
+    {
+        for ( Word w : parent.getWords() )
+        {
+            if (w.equals(this))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     // Getters
     public String getText()
     {
         return text;
-    }
-
-    // todo
-    public boolean isCategory(Catetgory cat)
-    {
     }
 
     public boolean isValid()

@@ -6,14 +6,21 @@ import java.util.*;
 
 public class Category
 {
-    private ArrayList<Word> words;
-    private boolean grouped;
-    private String categoyName;
+    private Word[] words;
+    private String categoryName;
 
-    public Category(ArrayList<Word> words)
+    public Category()
+    {
+        words = new Word[4];
+        categoryName = new String();
+    }
+    
+    public Category(Word[] words, String catName)
     {
         this.words = words;
-        grouped = false;
+        sortWords();
+
+        categoryName = catName;
     }
     
     /**
@@ -24,20 +31,82 @@ public class Category
      */
     public int compareCategory(Category other)
     {
+        other.sortWords();
+        int numoff = 0;
+
+        for ( int i=0; i<4; i++ )
+        {
+            if (!words[i].equals(other.getWords()[i]))
+            {
+                numoff++;
+            }
+        }
+
+        if (numoff == 0)
+        {
+            return 1;
+        }
+        else if (numoff == 1)
+        {
+            return 0;
+        }
+        return -1;
     }
 
     private void sortWords()
     {
-        words.sort()
+        // sort words;
+        Arrays.sort(words, new WordComparator());
     }
 
     public String getName()
     {
-        return categoyName;
+        return categoryName;
     }
 
-    public ArrayList<Word> getWords()
+    public Word[] getWords()
     {
-        return words.sort(); // return sorted
+        return words;
+    }
+
+    public boolean equals(Category other)
+    {
+        sortWords();
+        other.sortWords();
+        for ( int i=0; i<words.length; i++ )
+        {
+            if (!words[i].equals(other.getWords()[i]))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void setWords(Word[] newWords)
+    {
+	    words = newWords;
+    }
+
+    public void setName(String newName)
+    {
+	    categoryName = newName;
+    }
+
+    /**
+     * only for debugging
+     * @return cName: words
+     * EX: 
+     * COLORS: blue green red yellow
+     */
+    public String printCategory()
+    {
+        String ret = "";
+        ret += categoryName + ": ";
+        for ( Word w : words )
+        {
+            ret += w.getText() + " ";
+        }
+        return ret;
     }
 }
