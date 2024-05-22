@@ -103,9 +103,13 @@ public class Category
     {
         String ret = "";
         ret += categoryName + ": ";
-        for ( Word w : words )
+        for (int i=0; i<4; i++)
         {
-            ret += w.getText() + " ";
+            ret += words[i].getText().toUpperCase();
+            if ( i < 3 )
+            {
+                ret += ", ";
+            }
         }
         return ret;
     }

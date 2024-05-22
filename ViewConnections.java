@@ -1,6 +1,9 @@
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.Color;
 import java.awt.Dimension;
+
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -13,7 +16,7 @@ import java.awt.BorderLayout;
 /*
  * GUI for the Connections Game
  */
-public class ViewConnections extends JFrame
+public class ViewConnections
 {
     private JFrame frame;
 
@@ -44,8 +47,8 @@ public class ViewConnections extends JFrame
     private JPanel row3;
     private JPanel row4;
 
-    private ArrayList<GameButton> clicked;
     private Category[] categories;
+    ArrayList<GameButton> clicked = GameButton.getClicked();
 
     private int numRowsGuessed;
     private int numTries;
@@ -74,7 +77,6 @@ public class ViewConnections extends JFrame
         submit = new GameButton("SUBMIT");
 
         frame = new JFrame();
-        clicked = new ArrayList<>();
         categories = cats;
         
         numTries = 4;
@@ -89,8 +91,8 @@ public class ViewConnections extends JFrame
         // set up the frame
         frame.setSize(500, 500);
         frame.setTitle("Create Groups of Four!");
-        frame.setBackground(Color.WHITE);
-        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // frame.setBackground(Color.white);
         
         // set up the words grid
         JPanel container = new JPanel();
@@ -99,10 +101,14 @@ public class ViewConnections extends JFrame
         row1 = new JPanel();
         row1.setLayout(new GridLayout(1, 4));
         row1.add(button0);
+
         row1.add(button1);
         row1.add(button2);
         row1.add(button3);
+
         container.add(row1);
+
+        container.add(Box.createVerticalStrut(10));
 
         row2 = new JPanel();
         row2.setLayout(new GridLayout(1, 4));
@@ -112,6 +118,9 @@ public class ViewConnections extends JFrame
         row2.add(button7);
         container.add(row2);
 
+        container.add(Box.createVerticalStrut(10));
+        
+
         row3 = new JPanel();
         row3.setLayout(new GridLayout(1, 4));
         row3.add(button8);
@@ -119,7 +128,9 @@ public class ViewConnections extends JFrame
         row3.add(button10);
         row3.add(button11);
         container.add(row3);
-	
+        
+        container.add(Box.createVerticalStrut(10));
+
 
         row4 = new JPanel();
         row4.setLayout(new GridLayout(1, 4));
@@ -128,7 +139,8 @@ public class ViewConnections extends JFrame
         row4.add(button14);
         row4.add(button15);
         container.add(row4);
-	
+        
+        container.add(Box.createVerticalStrut(10));
 
 
         // add to bottomgrid
@@ -155,7 +167,7 @@ public class ViewConnections extends JFrame
             public void actionPerformed(ActionEvent event)
             {
                 GameButton buttonClicked = (GameButton) event.getSource();
-                String wordText = buttonClicked.getText();
+
 
                 if (buttonClicked.equals(submit))
                 {
@@ -184,6 +196,7 @@ public class ViewConnections extends JFrame
                             // completely wrong
                             numTries--;
                             triesLabel.setText("Tries Left: " + numTries);
+                            
                         }
 
 
@@ -203,9 +216,10 @@ public class ViewConnections extends JFrame
                         // timer to wait
                         // change color back
 
-                        unclickAllButtons();                        
+                        GameButton.unclickAllButtons();                        
                         // pause so that submit lights up green/red for a second
-                        submit.unclickButton();
+                        submit.unclickButton();    
+
                     }
                 }
                 else
@@ -213,15 +227,18 @@ public class ViewConnections extends JFrame
                     if (clicked.contains(buttonClicked))
                     {
                         buttonClicked.unclickButton();
-                        clicked.remove(buttonClicked);
+                        submit.setSubmitUnavailable();
                     }
                     else
                     {
                         if (clicked.size() < 4)
                         {
-                            clicked.add(buttonClicked);
-
                             buttonClicked.clickButton();
+
+                            if (clicked.size() == 4)
+                            {
+                                submit.setSubmitAvailable();
+                            }
                         }
                     }
                 }
@@ -487,13 +504,4 @@ public class ViewConnections extends JFrame
         return ret;
     }
    
-    private void unclickAllButtons()
-    {
-        int n = clicked.size();
-        for ( int i=0; i<n; i++)
-        {
-            clicked.get(0).unclickButton();
-            clicked.remove(0);
-        }
-    }
 }

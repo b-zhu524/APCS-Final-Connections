@@ -1,9 +1,13 @@
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Insets;
+
 import javax.swing.JButton;
 import java.util.ArrayList;
 import javax.swing.JFrame;
+import javax.swing.border.LineBorder;
 
 /**
  * @author Bolang Zhu 
@@ -15,7 +19,7 @@ import javax.swing.JFrame;
  */
 public class GameButton extends JButton
 {
-    // public static ArrayList<GameButton> clicked;
+    private static ArrayList<GameButton> clicked = new ArrayList<>();
 
     /**
      * 
@@ -23,9 +27,14 @@ public class GameButton extends JButton
      */
     public GameButton(String text)
     {
-       super(text);
-       setFontBlack();
-       setColorUnclicked();
+        super(text);
+        // super.setBorderPainted(false);
+        super.setOpaque(true);
+
+        super.setBorder(new LineBorder(Color.BLACK));
+
+        setFontBlack();
+        setColorUnclicked();
     }
 
     /**
@@ -35,8 +44,7 @@ public class GameButton extends JButton
     {
         setColorClicked();
         setFontWhite();
-        super.setBorderPainted(false);
-        super.setOpaque(true);
+        clicked.add(this);
     }
 
     /**
@@ -46,8 +54,33 @@ public class GameButton extends JButton
     {
         setColorUnclicked();
         setFontBlack();
-        super.setBorderPainted(true);
-        super.setOpaque(false);
+        clicked.remove(this);
+    }
+
+    public static void unclickAllButtons()
+    {
+        int n = clicked.size();
+        for ( int i=0; i<n; i++)
+        {
+            clicked.get(0).unclickButton();
+        }
+    }
+
+    public static ArrayList<GameButton> getClicked()
+    {
+        return clicked;
+    }
+
+    public void setSubmitUnavailable()
+    {
+        setColorUnclicked();
+        setFontBlack();
+    }
+
+    public void setSubmitAvailable()
+    {
+        setColorClicked();
+        setFontWhite();
     }
 
     /**
@@ -64,7 +97,8 @@ public class GameButton extends JButton
 
     private void setColorUnclicked()
     {
-        super.setBackground(new Color(239, 239, 230));
+        // super.setBackground(new Color(240, 240, 230));
+        super.setBackground(new Color(230, 230, 220));
     }
 
     private void setColorClicked()
@@ -74,23 +108,21 @@ public class GameButton extends JButton
 
     private void setFontWhite()
     {
-        super.setFont(new Font("Arial", Font.BOLD, 17));
+        super.setFont(new Font("Arial", Font.BOLD, 22));
         super.setForeground(Color.WHITE);
     }
     private void setFontBlack()
     {
-        setFontWhite();
+        super.setFont(new Font("Arial", Font.BOLD, 17));
         super.setForeground(Color.BLACK);
     }
 
-    // // FOR TESTING ONLY
-    // public static void main(String[] args) {
-    //     GameButton gb = new GameButton("TEST BUTTON");
-    //     JFrame jf = new JFrame();
-    //     jf.setSize(new Dimension(500, 500));
-    //     jf.add(gb);
-    //     jf.setVisible(true);
-    //     gb.clickButton();
-    //     // gb.unclickButton();
-    // }
+    public static void main(String[] args) {
+        JFrame jf = new JFrame();
+        jf.setSize(new Dimension(500, 500));
+        GameButton gb = new GameButton("testing");
+        jf.add(gb);
+
+        jf.setVisible(true);
+    }
 }
