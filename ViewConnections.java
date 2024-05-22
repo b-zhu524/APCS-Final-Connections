@@ -92,7 +92,7 @@ public class ViewConnections
         frame.setSize(500, 500);
         frame.setTitle("Create Groups of Four!");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // frame.setBackground(Color.white);
+
         
         // set up the words grid
         JPanel container = new JPanel();
@@ -101,7 +101,6 @@ public class ViewConnections
         row1 = new JPanel();
         row1.setLayout(new GridLayout(1, 4));
         row1.add(button0);
-
         row1.add(button1);
         row1.add(button2);
         row1.add(button3);
@@ -151,12 +150,14 @@ public class ViewConnections
         bottomGrid.add(submit);
         bottomGrid.add(triesLabel);
 
+        bottomGrid.setOpaque(false);
+        container.setOpaque(false);
         frame.add(bottomGrid, BorderLayout.SOUTH);
         frame.add(container);
+        frame.getContentPane().setBackground(Color.WHITE);
 
         // run
         frame.setVisible(true);
-
     }
 
     public void setUpButtonListeners()
@@ -182,7 +183,7 @@ public class ViewConnections
                             int cIndex = getCategoryIndex(clicked);
                             // add pause
                             reshuffle();
-                            turnIntoLabel(numRowsGuessed, categories[cIndex].printCategory()); // need to print every word in the category. "FRUITS". is a placeholder
+                            turnIntoLabel(numRowsGuessed, categories[cIndex].getCategoryInfo()); // need to print every word in the category. "FRUITS". is a placeholder
                             numRowsGuessed++;
                         }
                         else if (result == 0) // ONE AWAY!
@@ -331,7 +332,7 @@ public class ViewConnections
         wordList[2] = new Word(buttonList.get(2).getText());
         wordList[3] = new Word(buttonList.get(3).getText());
 
-        Category ret = new Category(wordList, ""); // name irrelevant
+        Category ret = new Category(wordList, "", 0); // name and difficulty irrelevant
         return ret;
     }
 
@@ -436,16 +437,16 @@ public class ViewConnections
     {
         for ( int i=0; i<4; i++ )
         {
-            if ( categoryInfo.equals(categories[i].printCategory()) )
+            if ( categoryInfo.equals(categories[i].getCategoryInfo()) )
             {
                 if ( i == 0 )
                 {
-                    return new Color(240, 225, 140); // YELLOW from NYTIMES
+                    return new Color(245, 224, 126); // YELLOW from NYTIMES
                 }
 
                 else if ( i == 1 )
                 {
-                    return new Color(175, 195, 115); // GREEN from NYTIMES
+                    return new Color(167, 194, 104); // GREEN from NYTIMES
                 }
                 else if ( i == 2 )
                 {

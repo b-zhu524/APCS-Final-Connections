@@ -8,19 +8,26 @@ public class Category
 {
     private Word[] words;
     private String categoryName;
+    private int difficulty; // int between 0 - 3 inclusive
 
-    public Category()
+    /**
+     * This constructor is only for the compareCategory method, where the difficulty and categoryName do not matter
+     * @param words
+     */
+    public Category(Word[] words)
     {
-        words = new Word[4];
-        categoryName = new String();
+        this.words = words;
+        sortWords();
     }
     
-    public Category(Word[] words, String catName)
+    public Category(Word[] words, String catName, int difficulty)
     {
         this.words = words;
         sortWords();
 
         categoryName = catName;
+
+        this.difficulty = difficulty;
     }
     
     /**
@@ -55,18 +62,34 @@ public class Category
 
     private void sortWords()
     {
-        // sort words;
         Arrays.sort(words, new WordComparator());
     }
 
+    /**
+     * getter method for categoryName
+     * @return the name of the category
+     */
     public String getName()
     {
         return categoryName;
     }
 
+    /**
+     * getter method for Words field
+     * @return Array of words
+     */
     public Word[] getWords()
     {
         return words;
+    }
+
+    /**
+     * getter method for the difficulty field
+     * @return difficulty from 0-3 inclusive (0 being easiest, and 3 being hardest)
+     */
+    public int getDifficulty()
+    {
+        return difficulty;
     }
 
     public boolean equals(Category other)
@@ -99,7 +122,7 @@ public class Category
      * EX: 
      * COLORS: blue green red yellow
      */
-    public String printCategory()
+    public String getCategoryInfo()
     {
         String ret = "";
         ret += categoryName + ": ";

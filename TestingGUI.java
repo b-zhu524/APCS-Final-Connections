@@ -175,7 +175,7 @@ public class TestingGUI extends JFrame
                             int cIndex = getCategoryIndex(clicked);
                             // add pause
                             reshuffle();
-                            turnIntoLabel(numRowsGuessed, categories[cIndex].printCategory()); // need to print every word in the category. "FRUITS". is a placeholder
+                            turnIntoLabel(numRowsGuessed, categories[cIndex].getCategoryInfo()); // need to print every word in the category. "FRUITS". is a placeholder
                             numRowsGuessed++;
                         }
                         else if (result == 0) // ONE AWAY!
@@ -321,7 +321,7 @@ public class TestingGUI extends JFrame
         wordList[2] = new Word(buttonList.get(2).getText());
         wordList[3] = new Word(buttonList.get(3).getText());
 
-        Category ret = new Category(wordList, ""); // name irrelevant
+        Category ret = new Category(wordList, "", 0); // name irrelevant
         return ret;
     }
 
@@ -426,7 +426,7 @@ public class TestingGUI extends JFrame
     {
         for ( int i=0; i<4; i++ )
         {
-            if ( categoryInfo.equals(categories[i].printCategory()) )
+            if ( categoryInfo.equals(categories[i].getCategoryInfo()) )
             {
                 if ( i == 0 )
                 {

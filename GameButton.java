@@ -28,7 +28,7 @@ public class GameButton extends JButton
     public GameButton(String text)
     {
         super(text);
-        // super.setBorderPainted(false);
+        super.setBorderPainted(false);
         super.setOpaque(true);
 
         super.setBorder(new LineBorder(Color.BLACK));
@@ -117,12 +117,12 @@ public class GameButton extends JButton
         super.setForeground(Color.BLACK);
     }
 
-    public static void main(String[] args) {
-        JFrame jf = new JFrame();
-        jf.setSize(new Dimension(500, 500));
-        GameButton gb = new GameButton("testing");
-        jf.add(gb);
+    // public static void main(String[] args) {
+    //     JFrame jf = new JFrame();
+    //     jf.setSize(new Dimension(500, 500));
+    //     GameButton gb = new GameButton("testing");
+    //     jf.add(gb);
 
-        jf.setVisible(true);
-    }
+    //     jf.setVisible(true);
+    // }
 }
